@@ -1,69 +1,68 @@
-
 # Roof Classification from Sentinel Satellite Imagery
 
-## Mô tả dự án
+## Project Description
 
-Dự án sử dụng các kỹ thuật học máy để phân biệt **mái nhà** và **không phải mái nhà** dựa trên dữ liệu ảnh vệ tinh từ Sentinel-1 (SAR) và Sentinel-2 (quang học).  
-Dữ liệu được biểu diễn theo từng **pixel** với các thông tin đặc trưng bao gồm:
+This project uses machine learning techniques to distinguish **roof** and **non-roof** areas based on satellite imagery data from Sentinel-1 (SAR) and Sentinel-2 (optical).  
+The data is represented per **pixel** with the following features:
 
-- Các bands: `VV`, `VH` (Sentinel-1), `B2`, `B3`, `B4` (Sentinel-2)
-- Tọa độ địa lý: `lat`, `long`
-- Nhãn (`label`): mái nhà (`1`) hoặc không phải mái nhà (`0`)
+- Bands: `VV`, `VH` (Sentinel-1), `B2`, `B3`, `B4` (Sentinel-2)
+- Geographic coordinates: `lat`, `long`
+- Label (`label`): roof (`1`) or non-roof (`0`)
 
-## Cấu trúc dữ liệu
+## Data Structure
 
 | Lat  | Long | VV   | VH   | B2   | B3   | B4   | Label |
 |------|------|------|------|------|------|------|-------|
 | ...  | ...  | ...  | ...  | ...  | ...  | ...  | 0/1   |
 
-Tổng cộng có **24,000 dòng**, được chia thành **80% train** và **20% test** theo tỷ lệ phân bố nhãn.
+A total of **24,000 rows**, split into **80% train** and **20% test** according to label distribution.
 
 ---
 
-## Các mô hình sử dụng
+## Models Used
 
 ### 1. **Random Forest**
 - `n_estimators = 100`
 - `random_state = 42`
 
-> Ưu điểm: ổn định, xử lý tốt dữ liệu có nhiều đặc trưng  
-> Nhược điểm: khó giải thích, chạy chậm hơn nếu quá nhiều cây  
+> Advantages: stable, handles data with many features well  
+> Disadvantages: hard to interpret, slower if too many trees  
 
 ### 2. **Logistic Regression**
 - `solver='liblinear'`, `penalty='l2'`, `C=1.0`
 
-> Ưu điểm: đơn giản, dễ giải thích, chạy nhanh  
-> Nhược điểm: giới hạn trong mô hình tuyến tính  
+> Advantages: simple, easy to interpret, fast  
+> Disadvantages: limited to linear models  
 
 ### 3. **Support Vector Machine (SVM)**
 - `kernel='rbf'`, `C=1.0`, `gamma='scale'`
 
-> Ưu điểm: mô hình mạnh trong không gian phức tạp  
-> Nhược điểm: khó giải thích, tốn tài nguyên với dataset lớn  
+> Advantages: powerful in complex spaces  
+> Disadvantages: hard to interpret, resource-intensive with large datasets  
 
 ---
 
-## Các bước xử lý
+## Processing Steps
 
-1. **Tiền xử lý dữ liệu**
-   - Gộp dữ liệu Sentinel-1 và Sentinel-2
-   - Loại outlier bằng boxplot
-   - Gán nhãn nhị phân cho `label`
-   - Tách `X` (features) và `y` (labels)
+1. **Data Preprocessing**
+   - Merge Sentinel-1 and Sentinel-2 data
+   - Remove outliers using boxplot
+   - Assign binary labels to `label`
+   - Split into `X` (features) and `y` (labels)
 
-2. **Chia tập train-test (80:20)**  
+2. **Train-test Split (80:20)**  
    ```python
    from sklearn.model_selection import train_test_split
    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
    ```
 
-3. **Huấn luyện mô hình**  
-   - Với mỗi mô hình: fit → predict → đánh giá (confusion matrix, accuracy, recall, precision, F1-score)
-   - Có vẽ biểu đồ **confusion matrix** và **ROC curve**
+3. **Model Training**  
+   - For each model: fit → predict → evaluate (confusion matrix, accuracy, recall, precision, F1-score)
+   - Plot **confusion matrix** and **ROC curve**
 
 ---
 
-## 📈 Kết quả (ví dụ với Random Forest)
+## 📈 Results (example with Random Forest)
 
 - **Accuracy**: 98.88%  
 - **Recall**: 99.14%  
@@ -78,25 +77,25 @@ Tổng cộng có **24,000 dòng**, được chia thành **80% train** và **20%
 
 ---
 
-## Công nghệ sử dụng
+## Technologies Used
 
 - Python (pandas, scikit-learn, matplotlib, seaborn)
 - Jupyter Notebook
-- Dữ liệu Sentinel xử lý trước
+- Pre-processed Sentinel data
 
 ---
 
-## Hướng mở rộng
+## Future Directions
 
-- Thử nghiệm thêm các thuật toán như XGBoost, LightGBM
-- Dùng mô hình deep learning (CNN) trực tiếp từ ảnh
-- Tối ưu hyperparameter với GridSearchCV
-- Tích hợp trên bản đồ với toạ độ GPS
+- Experiment with additional algorithms such as XGBoost, LightGBM
+- Use deep learning models (CNN) directly on images
+- Hyperparameter optimization with GridSearchCV
+- Integrate with maps using GPS coordinates
 
 ---
 
-## Người thực hiện
+## Author
 
-- Tên: Phạm Tuấn Đạt
-- Mã sinh viên: 22028218
-- Liên hệ: ptdat46work@gmail.com
+- Name: Pham Tuan Dat
+- Student ID: 22028218
+- Contact: ptdat46work@gmail.com
